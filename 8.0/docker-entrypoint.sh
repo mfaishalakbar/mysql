@@ -191,7 +191,11 @@ if [ "$1" = 'mysqld' -a -z "$wantHelp" ]; then
 
 			echo 'FLUSH PRIVILEGES ;' | "${mysql[@]}"
 		fi
-
+		
+		echo "CREATE USER '$MYSQL_REPLICATION_USER'@'%' IDENTIFIED BY '$MYSQL_REPLICATION_PASSWORD' ;" | "${mysql[@]}"
+		echo "GRANT REPLICATION SLAVE ON *.* TO '$MYSQL_REPLICATION_USER'@'%' IDENTIFIED BY '$MYSQL_REPLICATION_PASSWORD' ;" | "${mysql[@]}"
+		echo 'FLUSH PRIVILEGES ;' | "${mysql[@]}"
+		
 		echo
 		ls /docker-entrypoint-initdb.d/ > /dev/null
 		for f in /docker-entrypoint-initdb.d/*; do
@@ -207,7 +211,7 @@ if [ "$1" = 'mysqld' -a -z "$wantHelp" ]; then
 			echo >&2 'MySQL init process failed.'
 			exit 1
 		fi
-
+	
 		echo
 		echo 'MySQL init process done. Ready for start up.'
 		echo

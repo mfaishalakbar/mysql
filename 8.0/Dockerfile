@@ -65,9 +65,14 @@ RUN { \
 	&& chmod 777 /var/run/mysqld
 
 VOLUME /var/lib/mysql
+
 # Config files
 COPY config/ /etc/mysql/
 COPY docker-entrypoint.sh /usr/local/bin/
+
+# Edit Configuration
+RUN sed -i '/\[mysqld\]/a server-id=1\nlog-bin' /etc/mysql/mysql.conf.d/mysqld.cnf
+
 RUN ln -s usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
 ENTRYPOINT ["docker-entrypoint.sh"]
 
